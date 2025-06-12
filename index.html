@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Birthday Surprise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background: #1e1e2f;
+      color: white;
+      overflow: hidden;
+    }
+
+    .page {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .active {
+      display: flex;
+    }
+
+    #startBtn {
+      padding: 1rem 2rem;
+      font-size: 1.5rem;
+      background: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    #startBtn:hover {
+      background: #e73370;
+    }
+
+    #typingContainer {
+      font-size: 1.8rem;
+      max-width: 700px;
+      border-right: 2px solid white;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      animation: blink 1s step-end infinite;
+      text-align: left;
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    #imageContainer img {
+      width: 60%;
+      max-width: 400px;
+      margin: 1rem auto 0;
+      border-radius: 15px;
+      animation: fadeInZoom 1.5s ease-in-out forwards;
+      opacity: 0;
+    }
+
+    #imageContainer p {
+      font-size: 1.4rem;
+      margin-top: 1rem;
+      animation: fadeInUp 1s ease;
+    }
+
+    @keyframes fadeInZoom {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    #poemContainer {
+      font-size: 1.5rem;
+      max-width: 600px;
+      text-align: center;
+      animation: fadeInUp 1s ease;
+    }
+
+    .line {
+      opacity: 0;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .snow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #thankYouPage h1{
+      font-size: 2.5rem;
+      animation: fadeInUp 1.5s ease-in-out;
+    }
+    #thankYouPage h3{
+      font-size: 2.5rem;
+      animation: fadeInUp 1.5s ease-in-out;
+    }
+    #thankYouPage p{
+      font-size: 1.5rem;
+      animation: fadeInUp 1.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div id="intro" class="page active">
+    <button id="startBtn">Buka Ucapan 💫</button>
+  </div>
+
+  <div id="messagePage" class="page">
+    <canvas class="snow"></canvas>
+    <div id="typingContainer"></div>
+    <audio id="bgm" src="lagu.mp3" loop></audio>
+  </div>
+
+  <div id="poemPage" class="page">
+    <canvas class="snow"></canvas>
+    <div id="poemContainer"></div>
+  </div>
+
+  <div id="thankYouPage" class="page">
+    <h1>Greetings From Me 💫</h1>
+    <h3>~LDR~</h3>
+    <p>Support by Wakaf Salman</p>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const pages = document.querySelectorAll('.page');
+    const bgm = document.getElementById('bgm');
+    const typingContainer = document.getElementById('typingContainer');
+    const poemContainer = document.getElementById('poemContainer');
+
+    const messages = [
+      "Halooo Teh Nena 🌟",
+      "Honestly...",
+      "Aku masih butuh Teh Nena untuk di bagian Finance 💵",
+      "Masih butuh ilmu dan bimbingan Teh Nena 📚",
+      "However...",
+      "Rasanya Takdir berkata lain yah teh Nena",
+      "Pasca Melahirkan sekarang Teh Nena punya si kecil 🤱",
+      "Yang Harus Teh Nena Jaga 👩‍🍼",
+      "Teh Nena Rawat 🛌",
+      "Dengan Sepenuh Hati 💕",
+      "Sebagai mana Teh Nena Rawat dan Jaga si Kecil Selama dikandungan 🤰",
+      "Dan Sekarang...",
+      "Teh Nena menjadi Madrasatul Ula untuk si kecil 🌹",
+    ];
+
+    const poemLines = [
+      'Semoga setiap urusannya dipermudah',
+      'Dan segala langkahnya diberkahi tanpa lelah',
+      '',
+      '',
+      'Semoga selalu menjadi Ibu yang hebat',
+      'Yang tulus mendidik dengan penuh semangat',
+      '',
+      '',
+      'Semoga Selalu Menjadi Ibu yang baik',
+      'Penuh Kasih disetiap Detik',
+      '',
+      '',
+      'Semoga selalu diberikan tubuh yang sehat',
+      'Dan bisa memberikan banyak manfaat',
+      '',
+      '',
+      'Semoga ini bukan suatu perpisahan',
+      'Tetapi awal dari perjalanan',
+      '',
+      '',
+      'Demikian Doa dan harapan yang bisa aku ucapkan',
+      'Semoga Allah SWT bisa mengabulkan',
+      '',
+      "Aamiin ya rabbal 'alamin"
+    ];
+
+    function showPage(index) {
+      pages.forEach((page, i) => {
+        page.classList.toggle('active', i === index);
+      });
+    }
+
+    function typeMessage(callback) {
+      typingContainer.innerHTML = '';
+      let currentMessage = 0;
+      let currentChar = 0;
+      const span = document.createElement('span');
+      typingContainer.appendChild(span);
+
+      function type() {
+        if (currentChar < messages[currentMessage].length) {
+          span.textContent += messages[currentMessage][currentChar++];
+          setTimeout(type, 47);
+        } else {
+          currentMessage++;
+          if (currentMessage < messages.length) {
+            setTimeout(() => {
+              span.textContent = '';
+              currentChar = 0;
+              type();
+            }, 3000);
+          } else {
+            setTimeout(callback, 3000);
+          }
+        }
+      }
+      type();
+    }
+
+    function showPoem(callback) {
+      poemContainer.innerHTML = '';
+      let i = 0;
+      function nextLine() {
+        if (i < poemLines.length) {
+          const line = document.createElement('div');
+          line.textContent = '';
+          line.classList.add('line');
+          poemContainer.appendChild(line);
+
+          let char = 0;
+          function typeChar() {
+            if (char < poemLines[i].length) {
+              line.textContent += poemLines[i][char++];
+              setTimeout(typeChar, 35);
+            } else {
+              i++;
+              setTimeout(nextLine, 1000);
+            }
+          }
+          typeChar();
+        } else {
+          setTimeout(callback, 3000);
+        }
+      }
+      nextLine();
+    }
+
+    function createSnow() {
+      const canvases = document.querySelectorAll(".snow");
+      canvases.forEach(canvas => {
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let flakes = [];
+        for (let i = 0; i < 100; i++) {
+          flakes.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 4 + 1,
+            d: Math.random() * 1 + 1
+          });
+        }
+
+        function drawSnow() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "white";
+          ctx.beginPath();
+          flakes.forEach(f => {
+            ctx.moveTo(f.x, f.y);
+            ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+          });
+          ctx.fill();
+          moveSnow();
+        }
+
+        function moveSnow() {
+          flakes.forEach(f => {
+            f.y += f.d;
+            if (f.y > canvas.height) {
+              f.y = 0;
+              f.x = Math.random() * canvas.width;
+            }
+          });
+        }
+
+        function animateSnow() {
+          drawSnow();
+          requestAnimationFrame(animateSnow);
+        }
+
+        animateSnow();
+      });
+    }
+
+    startBtn.addEventListener('click', () => {
+      showPage(1);
+      bgm.play();
+      createSnow();
+      typeMessage(() => {
+        showPage(2);
+        createSnow();
+        showPoem(() => {
+          showPage(3);
+        });
+      });
+    });
+  </script>
+</body>
